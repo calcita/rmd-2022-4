@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>R + Markdown: automatización desde   un mail a una tesis         </title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Richard Detomasi y Gabriela Mathieu " />
+    <script src="index_files/header-attrs/header-attrs.js"></script>
+    <link href="index_files/remark-css/default.css" rel="stylesheet" />
+    <link href="index_files/remark-css/default-fonts.css" rel="stylesheet" />
+    <link href="index_files/remark-css/rladies-fonts.css" rel="stylesheet" />
+    <link rel="stylesheet" href="custom.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# R + Markdown: automatización desde <br> un mail a una tesis<br><br>
+<img src="img_md/Rlogo.png" style="width:8.0%" />   <img
+src="img_md/RStudio-Logo-Flat.png" style="width:18.0%" />   <img
+src="img_md/rmarkdown.png" style="width:6.0%" />
+### Richard Detomasi y Gabriela Mathieu<br>
+### <span>&lt;style=‘font-size: 80%;’&gt; FCS - Educación Permanente
+<br> Taller R + Markdown<br><br>
+</style>
+</span> <img src="img_md/cc-by-sa.png" />
+
+---
+
+
+
+
+
+
+
+
+# ¿Qué haremos hoy?
+
+Aprender a combinar código R junto a Markdown
+
+Utilizar los chunks y el código incrustado en el texto
+
+Configurar los chunks para definir que se ve en el archivo compilado
+
+Configurar los parámetros de las imágenes/gráficos generados en un chunk
+
+Generar tablas en un archivo Rmd
+
+Como hacer una tabla manual
+
+Cómo hacer una tabla automática
+
+Incorporar elementos para customizar la tabla
+
+Definir cómo se imprimen los números (separadores de miles, decimales)
+
+Referenciar tablas en el documento
+
+---
+class: inverse, center, middle
+# Combinar código R y texto
+
+---
+# Recursos recomendados
+
+- [Awesome tables in pdf](https://cran.r-project.org/web/packages/kableExtra/vignettes/awesome_table_in_pdf.pdf)
+- [Awesome tables in html](https://haozhu233.github.io/kableExtra/awesome_table_in_html.html)
+- [remedy: RStudio addins](https://thinkr-open.github.io/remedy/)
+- [beautifyR: RStudio addins](https://mwip.github.io/beautifyR/)
+- [janitor](https://cran.r-project.org/web/packages/janitor/vignettes/tabyls.html)
+- [Atajos de teclado RStudio](https://www.youtube.com/watch?v=bfkAZxDjuBg&amp;ab_channel=RTips)
+- [Customizing keyboard shortcuts](https://support.rstudio.com/hc/en-us/articles/206382178?version=2022.02.2%2B485&amp;mode=desktop)
+- [Tablas del paquete gtsummary](https://www.danieldsjoberg.com/gtsummary/articles/rmarkdown.html)
+
+---
+class: inverse, center, middle
+# Código R incrustado
+
+---
+# Código incrustado 
+
+- El código incrustado refiere a incluir código R junto con el texto. 
+&lt;br&gt;&lt;br&gt;
+--
+
+- El resultado de un código se puede insertar directamente en el texto escribiendo el código dentro de ` `r ` `. 
+&lt;br&gt;&lt;br&gt;
+--
+
+- El backtick se puede hacer usando el addins **remedy** o configurando el atajo de teclado.
+--
+&lt;br&gt;&lt;br&gt;
+
+.pull-left[
+**Rmd**
+
+ La raíz cuadrada de 9 es \` ` r sqrt(9) ` \`
+]
+
+.pull-right[
+**PDF**
+
+La raíz cuadrada de 9 es 3
+]
+
+---
+# Remedy
+
+Una vez instalado remedy lo busco en el listado de Addins
+
+.center.w-50[
+![](img_md/remedy.gif)&lt;!-- --&gt;
+
+]
+
+---
+# Configurar atajo de teclado
+
+Puedo generar un atajo de teclado específico para generar más fácil el backtick
+
+.center.w-50[
+![](img_md/backtick.gif)&lt;!-- --&gt;
+
+]
+
+---
+# Utilidad del código incrustado 
+
+- Cuando en una oración, por ejemplo, describimos la cantidad de alojamientos disponibles en Berlín, podemos hacerlo funcional para que cuando corramos el informe en el futuro y la cantidad de casos varió, no sea necesario modificar nada.
+
+.pull-left[
+**Rmd**
+
+La cantidad de alojamientos de Airbnb en Berlin es  \` ` r nrow(berlin) ` \`
+
+]
+
+.pull-right[
+**PDF**
+
+La cantidad de alojamientos de Airbnb en Berlin es 22552
+]
+
+En estos detalles, reside la reproducibilidad del código RMarkdown.
+
+Minimizo errores y gano tiempo.
+
+Este código puede ser bastante más complejo e incluir un razonamiento. Por ej. "la mayoría de los alojamientos son de tal tipo y luego de tal otro."
+
+---
+class: inverse, center, middle
+# Chunks
+
+---
+# Chunk
+
+- El chunk es un entorno para escribir un trozo de código de R. &lt;br&gt;&lt;br&gt;
+&lt;img src="img_md/chunk_entorno.png" width="200px" style="display: block; margin: auto;" /&gt;
+&lt;br&gt;&lt;br&gt;
+--
+
+- Se genera haciendo click en el ícono:
+&lt;br&gt;&lt;br&gt;
+&lt;img src="img_md/chunk_icon.png" width="100px" style="display: block; margin: auto;" /&gt;
+--
+
+- O con el atajo de teclado con el cursor dentro de un archivo Rmd: &lt;span style=" font-weight: bold;    border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: #b3e2cd !important;" &gt;CTRL + ALT + i&lt;/span&gt;
+&lt;br&gt;&lt;br&gt;
+--
+
+.pull-left[
+**Rmd**
+
+&lt;img src="img_md/chunk1.png" width="100px" style="display: block; margin: auto auto auto 0;" /&gt;
+
+]
+
+.pull-right[
+**PDF**
+
+```r
+summary(cars)
+```
+
+```
+     speed           dist       
+ Min.   : 4.0   Min.   :  2.00  
+ 1st Qu.:12.0   1st Qu.: 26.00  
+ Median :15.0   Median : 36.00  
+ Mean   :15.4   Mean   : 42.98  
+ 3rd Qu.:19.0   3rd Qu.: 56.00  
+ Max.   :25.0   Max.   :120.00  
+```
+]
+
+---
+# Nombre de los chunks
+
+- Cada chunk puede tener un &lt;span style=" font-weight: bold;    border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: #b3e2cd !important;" &gt;nombre específico&lt;/span&gt; que nos sirva para volver a cierto chunk rápidamente. El nombre se escribe luego de la *r* dejando un espacio. 
+--
+
+- Puede ser difícil definirle un nombre, algunas recomendaciones:
+    - elegir una sola palabra que describa la acción (ej., "estimacion")
+    - elegir una palabra que describa el contenido del chunk (ej., "censo")
+    - si una palabra no es suficiente, separar pablar con guión medio (ej., censo-2011)
+
+.center.w-30[
+![](img_md/chunk_name.gif)&lt;!-- --&gt;
+]
+
+---
+# Opciones de chunk
+
+- Se puede controlar la forma en que se imprime el código en el documento de salida cambiando las opciones del *chunk* 
+
+| Opción   | Default | Efecto |
+|---------------|:-------------:|:-------------:|
+| eval | TRUE | evalúa el código y muestra los resultados
+| echo | TRUE | muestra el código
+| warning | TRUE | imprime las advertencias
+| error | FALSE | imprime los mensajes de error
+| message | TRUE | imprime los mensajes
+--
+
+- Solo es válido escribir `TRUE` y `FALSE` todo con mayúscula y la palabra entera. 
+--
+
+- Cada parámetro va separado por una coma.
+
+---
+# Incluir imágenes
+
+- Dentro de un chunk llamamos a la función &lt;span style=" font-weight: bold;    border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: #b3e2cd !important;" &gt;include_graphics()&lt;/span&gt; del paquete **knitr**.
+--
+
+- Entre comillas ponemos el nombre y extensión de la imagen, y la ruta si es que no se encuentra en la misma carpeta que el Rmd.
+--
+
+- En la configuración del chunk podemos definir tamaño, alineación, etc.
+--
+
+
+.pull-left[
+**Rmd**
+
+.center.w-70[
+&lt;img src="img_md/chunk_fig1_rmd.png" width="255" /&gt;
+]
+]
+
+.pull-right[
+**PDF**
+
+.center.w-30[
+&lt;img src="img_md/chunk_fig1_pdf.png" width="278" /&gt;
+]
+]
+
+---
+# Parametros imágenes
+
+- Las opciones de la imagen se controlan en el encabezado del chunk
+&lt;br&gt;&lt;br&gt;
+--
+
+- &lt;span style=" font-weight: bold;    border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: #b3e2cd !important;" &gt;fig.height&lt;/span&gt;: define la altura de la figura. En este caso se indica el número sin comillas. Ejemplo: `fig.height = 7`. La unidad de medida es pulgadas.
+&lt;br&gt;&lt;br&gt;
+--
+
+- &lt;span style=" font-weight: bold;    border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: #b3e2cd !important;" &gt;fig.width&lt;/span&gt;: idem al anterior pero respecto al ancho
+&lt;br&gt;&lt;br&gt;
+--
+
+- &lt;span style=" font-weight: bold;    border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: #b3e2cd !important;" &gt;fig.align&lt;/span&gt;: define la alineación de la figura, por defecto será a la izquierda. Las opciones son: `"default"`, `"center"`, `"left"`, o `"right"`
+&lt;br&gt;&lt;br&gt;
+--
+
+- &lt;span style=" font-weight: bold;    border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: #b3e2cd !important;" &gt;fig.cap&lt;/span&gt;: define el título que acompaña a la imagen. Se debe indicar entre comillas. Ejemplo: `fig.cap = "Cantidad de alojamientos en Berlin según barrio"`
+&lt;br&gt;&lt;br&gt;
+--
+
+- &lt;span style=" font-weight: bold;    border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: #b3e2cd !important;" &gt;fig.scale&lt;/span&gt;: cuánto hay que escalar la figura, respecto a 1
+&lt;br&gt;&lt;br&gt;
+--
+
+- &lt;span style=" font-weight: bold;    border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: #b3e2cd !important;" &gt;fig.angle&lt;/span&gt;: cuánto hay que girar la figura, en grados
+&lt;br&gt;&lt;br&gt;
+--
+
+- &lt;span style=" font-weight: bold;    border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: #b3e2cd !important;" &gt;fig.pos&lt;/span&gt;: posición de la figura. Por ejemplo:`fig.pos = 'h'`
+&lt;br&gt;&lt;br&gt;
+--
+
+- &lt;span style=" font-weight: bold;    border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: #b3e2cd !important;" &gt;out.height&lt;/span&gt; y &lt;span style=" font-weight: bold;    border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: #b3e2cd !important;" &gt;out.width&lt;/span&gt;: define la altura de la figura en el documento final. Ejemplo: "50%". Si el documento se exporta a PDF es posible incluir LATEX: "8cm", y si se exporta a HTML, "300px"
+
+---
+# Configuración inicial de los chunks
+
+A este chunk le llamamos setup, pero puede tener cualquier nombre
+
+.center.w-80[
+&lt;img src="img_md/chunk_setup.png" width="310" /&gt;
+]
+&lt;br&gt;&lt;br&gt;
+--
+
+- Definimos que no se muestre el código de los chunks pero sí se evalúen. Y también defino la alineación y tamaño de las figuras. 
+&lt;br&gt;&lt;br&gt;
+--
+
+- Puedo prescindir de definir `eval = TRUE` porque es su valor por defecto.
+&lt;br&gt;&lt;br&gt;
+--
+
+- Para cambiar un chunk en particular se debe redefinir en este los parámetros. Por ejemplo, si en uno en particular quiero mostrar el código seteo `echo` como `TRUE`.
+
+---
+# Comentar código
+
+- Ahora que sabemos combinar código R y Markdown en un archivo Rmd, nos resulta útil el atajo de teclado para comentar una parte del documento.
+&lt;br&gt;&lt;br&gt;
+--
+
+- &lt;span style=" font-weight: bold;    border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: #b3e2cd !important;" &gt;CTRL + SHIFT + C&lt;/span&gt;: sirve para comentar y descomentar un trozo de código R o Markdown. 
+&lt;br&gt;&lt;br&gt;
+--
+
+- RStudio va a saber con que símbolo hacer el comentario identificando el lenguaje de lo seleccionado.
+
+
+.center.w-50[
+![](img_md/comments.gif)&lt;!-- --&gt;
+]
+
+---
+# Recomendaciones generales
+
+- Incluir a continuación del preámbulo 3 chunks con la configuración del documento, el listado de paquetes a utilizar y el listado de datos a cargar.
+&lt;br&gt;&lt;br&gt;
+--
+
+- El chunk de setup sirve para establecer de antemano si el código de los chunks se verá o no, el tamaño de las imágenes y gráficos a incluir, por último, la carga de los datos al inicio previene de errores al mover algún chunk.
+&lt;br&gt;&lt;br&gt;
+--
+
+- Acostumbrarse a nombrar los chunks cuando tenemos un documento extenso.
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
