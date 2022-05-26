@@ -343,6 +343,403 @@ A este chunk le llamamos setup, pero puede tener cualquier nombre
 --
 
 - Acostumbrarse a nombrar los chunks cuando tenemos un documento extenso.
+
+---
+class: inverse, center, middle
+# Tablas 
+
+---
+# Tabla manual
+
+- Cuando los valores de una tabla son fijos (no dependen de los datos), se puede crear una tabla manual.
+
+.pull-left[
+&lt;img src="img_md/tabla_manual_code.png" width="400px" style="display: block; margin: auto;" /&gt;
+]
+
+
+.pull-right[
+&lt;img src="img_md/tabla_manual_output.png" width="400px" style="display: block; margin: auto;" /&gt;
+]
+--
+
+- La primera línea es el nombre de las columnas separadas por una barra vertical `|`
+&lt;br&gt;&lt;br&gt;
+--
+
+- La segunda línea indica la alineación del texto, donde el símbolo `:` si se escribe solo a la izquierda de los guiones medios representa alineación a la izquierda.
+&lt;br&gt;&lt;br&gt;
+--
+
+- Cada fila debe tener la misma cantidad de barras verticales sino dará error.
+&lt;br&gt;&lt;br&gt;
+--
+
+- Cuando los valores de una tabla dependen de los datos, también se puede crear una tabla manual, pero esto no tiene sentido.
+
+---
+# Tablas automáticas
+
+La forma más fácil es imprimiendo un data.frame pero la tabla no se ve muy bien.
+
+**Rmd**
+
+
+```r
+# cargo datos
+load("data/berlin.Rdata")
+
+# cargo paquetes
+library(dplyr)
+
+# creo objeto
+tabla &lt;- berlin %&gt;% 
+  select(host_name, neighbourhood_group, price, review_scores_rating) %&gt;% 
+  slice(1:8)
+tabla
+```
+
+
+**PDF**
+
+```
+       host_name      neighbourhood_group price review_scores_rating
+1            Ian                    Mitte    60                   93
+2        Michael                   Pankow    17                  100
+3         Britta                   Pankow    90                   92
+4           Jana   Tempelhof - Schöneberg    26                   88
+5         Bright                   Pankow    42                   96
+6        Philipp                   Pankow   180                  100
+7 Chris + Oliver                   Pankow    70                   93
+8        Melanie Friedrichshain-Kreuzberg   120                   NA
+```
+
+
+---
+# knitr::kable()
+
+- Una forma simple de hacer una tabla a partir de un objeto de R.
+&lt;br&gt;&lt;br&gt;
+- kable() tiene como argumento principal un data.frame
+&lt;br&gt;&lt;br&gt;
+- kable() genera un código en alguno de los formatos que le definimos. 
+&lt;br&gt;&lt;br&gt;
+- Para documentos pdf el formato latex es el más versátil. El código que genera kable (pero no lo vemos) será en lenguaje LaTeX.
+&lt;br&gt;&lt;br&gt;
+- Permite, agregar título, definir la alineación de las columnas, los nombres de las columnas, el formato de los números y cantidad de decimales.
+
+---
+# Tabla: dígitos y alineación
+
+
+```r
+library(knitr)
+kable(tabla, # data.frame
+      digits = 2, # digitos
+      align = c(rep("l", 2), rep("c", 2))) #alineacion
+```
+
+&lt;img src="img_md/kable1.png" width="600px" style="display: block; margin: auto auto auto 0;" /&gt;
+
+---
+# Agregar título a la tabla
+
+
+```r
+kable(tabla,
+      digits = 2, align = c(rep("l", 2), rep("c", 2)),
+*     caption = "Alojamientos Airbnb en Berlin")
+```
+
+&lt;img src="img_md/kable_titulo.png" width="800px" style="display: block; margin: auto auto auto 0;" /&gt;
+
+---
+# Modificar nombres de columnas
+
+Con el argumento `col.names` modifico los nombres de las columnas que se muestran en la tabla, pero esto no afecta a los datos.
+
+Puedo elegir nombres con tildes y ñ o con más de un término solo para mostrar la tabla. Sin afectar los nombres de las variables que no deberían tener estos elementos.
+
+
+```r
+kable(tabla, 
+      digits = 2, 
+*     col.names = c("Anfitrión/a", "Barrio", "Precio", "Puntaje"))
+```
+
+&lt;img src="img_md/colnames.png" width="500px" style="display: block; margin: auto auto auto 0;" /&gt;
+
+---
+class: inverse, center, middle
+# kableExtra
+
+---
+# kable_styling()
+
+- Una mayor cantidad de configuraciones de la tabla las obtengo con la función `kable_styling()` del paquete `kableExtra`.
+&lt;br&gt;&lt;br&gt;
+- `latex_options`: "basic", "striped", "hold_position", "HOLD_position", "scale_down" y "repeat_header"
+&lt;br&gt;&lt;br&gt;
+- `full_width`: si vale `TRUE` ocupa todo el ancho 
+&lt;br&gt;&lt;br&gt;
+- `font_size`: tamaño de letra
+&lt;br&gt;&lt;br&gt;
+- Estos son algunos de los argumentos que incluye.
+
+
+---
+# Agregar líneas y colorear filas
+
+Con la opción "striped" del argumento `latex_options ` se agregan líneas horizontales para cada fila y una fila se pinta de blanco y la siguiente de gris, así sucesivamente.
+
+
+```r
+library(kableExtra)
+kable(tabla) %&gt;% 
+  kable_styling(latex_options = "striped")
+```
+
+&lt;img src="img_md/striped.png" width="600px" style="display: block; margin: auto auto auto 0;" /&gt;
+
+---
+# Eliminar líneas intermedias 
+
+- Si al código anterior le agregamos el argumento `booktabs` igual `TRUE` se eliminan esas líneas extras. Al mantener el `latex_options` = "striped", se mantiene el color de las filas. 
+
+
+```r
+library(kableExtra)
+kable(tabla, booktabs = T) %&gt;% 
+  kable_styling(latex_options = "striped")
+```
+
+
+&lt;img src="img_md/booktabs.png" width="600px" style="display: block; margin: auto auto auto 0;" /&gt;
+
+---
+# Fijar la posición 
+
+`hold position` o `HOLD_position` hace que la tabla se vea en la posición del documento que fue generada. De lo contrario al compilar el documento la tabla se ubicará en el "mejor lugar" posible para que no quede cortada ni un espacio en blanco grande en una página.
+
+
+```r
+kable(tabla, "latex", caption = "Barrios", booktabs = T) %&gt;%
+  kable_styling(latex_options = c("striped", "hold_position"))
+```
+ 
+ 
+
+&lt;img src="img_md/hold.png" width="600px" style="display: block; margin: auto auto auto 0;" /&gt;
+
+---
+# Achicar la escala
+
+Cuando tengo una tabla con varias columnas, que no entra en una página, con el argumento `scale down` puedo achicar la tabla. 
+ 
+
+```r
+kable(cbind(tabla, tabla, tabla), "latex", booktabs = T) %&gt;% 
+  kable_styling(latex_options = c("striped", "scale_down"))
+```
+&lt;img src="img_md/scaledown.png" width="800px" style="display: block; margin: auto auto auto 0;" /&gt;
+
+---
+# Modificar el ancho de las columnas
+
+Puede definir un ancho específico para cada columna con la función `column_spec()`.
+
+En este caso defino que la columna 1 tenga 8 cm de ancho. 
+
+ 
+
+```r
+kable(tabla, "latex", booktabs = T) %&gt;% 
+  kable_styling(full_width = T) %&gt;% 
+  column_spec(1, width = "8cm")
+```
+
+&lt;img src="img_md/column_spec.png" width="600px" style="display: block; margin: auto auto auto 0;" /&gt;
+
+---
+# Modificar el tamaño del texto
+
+Puedo definir en que tamaño se vea el texto de una tabla con el argumento `font_size`.
+
+
+```r
+kable(tabla, "latex", booktabs = T) %&gt;% 
+  kable_styling(font_size = 7)
+```
+
+
+&lt;img src="img_md/font_size.png" width="600px" style="display: block; margin: auto auto auto 0;" /&gt;
+
+---
+# Configuro las filas
+
+Con la función `row_spec()` indicando el número de fila puedo cambiar el ángulo del texto, entre otras cosas. En este caso para cambiar la fila del encabezado de la tabla debo indicar que es la fila 0.
+
+
+
+```r
+kable(tabla, "latex", booktabs = T, align = "c") %&gt;% 
+  kable_styling(latex_options = "striped", full_width = F) %&gt;% 
+  row_spec(0, angle = 45)
+```
+
+
+&lt;img src="img_md/row_spec.png" width="600px" style="display: block; margin: auto auto auto 0;" /&gt;
+
+---
+# Agregar notas al pie
+
+Con la función `footnote()` puedo agregar notas al pie de la tabla.
+
+
+```r
+kable(tabla, "latex", align = "c", booktabs = T) %&gt;% 
+  footnote(general = "Here is a general comments of the table. ", 
+           number =c("Footnote 1; ", "Footnote 2; "),
+           alphabet =c("Footnote A; ", "Footnote B; "),
+           symbol =c("Footnote Symbol 1; ", "Footnote Symbol 2"),
+           general_title = "General: ", number_title = "Type I: ",
+           alphabet_title = "Type II: ", symbol_title = "Type III: ",
+           footnote_as_chunk = T, title_format =c("italic", "underline"))
+```
+
+
+&lt;img src="img_md/footnote.png" width="600px" style="display: block; margin: auto auto auto 0;" /&gt;
+
+
+---
+# Tabla a partir de un csv
+
+- Puedo leer la tabla desde un archivo csv e imprimirla en el documento con &lt;span style=" font-weight: bold;    border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: #b3e2cd !important;" &gt;kable()&lt;/span&gt;
+&lt;br&gt;&lt;br&gt;
+- Tiene sentido cuando debo escribir una tabla manual pero queda confuso el código si lo escribo directo en el Rmd o ya la tengo en este formato.
+
+
+```r
+tab &lt;- read.csv("data/municipios_barrios.csv")
+
+kable(tab, format = "latex", booktabs = TRUE,
+             caption = "Delimitación de Municipios de Montevideo") %&gt;%
+    kable_styling(font_size = 9, 
+                  latex_options = c("striped", "hold_position")) %&gt;%
+    column_spec(column = 2, width = "7cm", border_right = F) 
+```
+
+
+&lt;img src="img_md/kable_csv.png" width="400px" style="display: block; margin: auto auto auto 0;" /&gt;
+
+
+---
+class: inverse, center, middle
+# janitor
+
+
+---
+# Paquete janitor
+
+- El paquete janitor trae una serie de funciones que permiten fácilmente generar una tabla con diferentes componentes.
+&lt;br&gt;&lt;br&gt;
+- Para mejorar la tabla agregando totales, porcentajes, etc., debemos utilizar algunas funciones del paquete &lt;span style=" font-weight: bold;    border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: #b3e2cd !important;" &gt;janitor&lt;/span&gt; combinadas con &lt;span style=" font-weight: bold;    border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: #b3e2cd !important;" &gt;tabyl()&lt;/span&gt;.
+&lt;br&gt;&lt;br&gt;
+- Hay un conjunto de funciones &lt;span style=" font-weight: bold;    border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: #b3e2cd !important;" &gt;adorn_*()&lt;/span&gt; para agregar totales por filas o columnas, agregar porcentajes, etc.
+&lt;br&gt;&lt;br&gt;
+- Por ejemplo: &lt;span style=" font-weight: bold;    border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: #b3e2cd !important;" &gt;adorn_totals()&lt;/span&gt; agrega totales marginales a una tabla de doble entrada. 
+&lt;br&gt;&lt;br&gt;
+- Sino debería editar la tabla antes de usarla en la función `kable()` pero es más fácil combinar esta función con las de `janitor`.
+
+---
+# Agregar totales
+
+
+```r
+library(janitor)
+t1 &lt;- berlin %&gt;% 
+  tabyl(room_type) %&gt;% 
+  adorn_totals()
+
+kable(t1, booktabs = TRUE) 
+```
+
+&lt;img src="img_md/kable_totals.png" width="400px" style="display: block; margin: auto auto auto 0;" /&gt;
+
+---
+# Tablas con porcentaje
+
+Si queremos mostrar la tabla en porcentajes, a la función **adorn_percentages()** se le agrega una función encadenada llamada **adorn_pct_formatting()** donde, entre otras cosas, se le puede indicar la cantidad de dígitos a mostrar después de la coma. 
+
+
+```r
+t2 &lt;- berlin %&gt;% 
+  tabyl(neighbourhood_group, room_type) %&gt;% 
+*       adorn_percentages() %&gt;%
+*       adorn_pct_formatting()
+
+kable(t2, booktabs = TRUE)
+```
+
+&lt;img src="img_md/kable_percentages.png" width="500px" style="display: block; margin: auto auto auto 0;" /&gt;
+
+---
+class: inverse, center, middle
+# Funciones propias
+
+---
+# Defino una nueva "kable()"
+
+- Para no editar cada vez kable con los parámetros deseados podemos "fijar" esos parámetros escribiendo una nueva función.
+&lt;br&gt;&lt;br&gt;
+- Redefinimos kable() para que incorpore separadores de decimales y miles (definiendo `decimal` y `big`), habilitamos la referencia a tabla con format y definimos siempre la alineación de elementos en center (`align`), dejamos fijas las tablas con `longtable = T`.
+
+
+```r
+Kable2 &lt;- function(...) {
+  knitr::kable(...,
+               format.args = list(decimal.mark = ',',
+                                  big.mark = ".",
+                                  format = "latex",
+                                  align = "c"),
+               longtable = T,
+               booktabs = T) %&gt;%
+    kableExtra::kable_styling() %&gt;%
+    kableExtra::row_spec(0, bold = TRUE) %&gt;%
+    kableExtra::footnote(general = "Fuente: Elaboración propia",
+                         general_title = "")
+}
+```
+
+&lt;br&gt;&lt;br&gt;
+- Esto solo afecta el formato decimal dentro de las tablas, para aplicarlo al resto del documento debo definir al principio del documento una opción global en los primeros chunks: `options(OutDec = ",")`.
+
+---
+# Otras funciones para hacer tablas
+
+![](img_md/table_summary.png)
+---
+class: inverse, center, middle
+# Ecuaciones matemáticas
+
+---
+# Ecuaciones matemáticas
+    
+- `rmarkdown` admite la escritura de ecuaciones al estilo LaTeX
+&lt;br&gt;&lt;br&gt;
+- El símbolo $ indica a RMarkdown que empieza una ecuación en \LaTex en la linea de texto.
+&lt;br&gt;&lt;br&gt;
+
+`$A = \pi \times r^{2}$` 
+&lt;br&gt;&lt;br&gt;
+- Da como resultado: 
+&lt;br&gt;&lt;br&gt;
+
+`\(A = \pi \times r^{2}\)`
+- El símbolo `$$` indica a RMarkdown que empieza una ecuación en LaTex pero en una línea aparte (no junto al texto).
+&lt;br&gt;&lt;br&gt;
+- [Aquí](https://www.overleaf.com/learn/latex/Mathematical_expressions) podés profundizar en las expresiones matemáticas admitidas.
+
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
